@@ -2,7 +2,7 @@ import sys
 import time
 import pygame
 from pygame.locals import *
-import blocks
+
 
 SIZE = 30  # 每个小方格大小
 BLOCK_HEIGHT = 25  # 游戏区高度
@@ -16,13 +16,14 @@ BLOCK_COLOR = (20, 128, 200)  #
 BLACK = (0, 0, 0)
 RED = (200, 30, 30)      # GAME OVER 的字体颜色
 
+
 def print_text(screen, font, x, y, text, fcolor=(255, 255, 255)):
    imgText = font.render(text, True, fcolor)
    screen.blit(imgText, (x, y))
 
 class CView:   #只是完成了可视化层、未完成UI交互层，需要在前面设计交互
-
-    # 画背景
+  
+  # 画背景
     def _draw_background(self,screen):
       # 填充背景色
       screen.fill(BG_COLOR)
@@ -41,31 +42,95 @@ class CView:   #只是完成了可视化层、未完成UI交互层，需要在�
            pygame.draw.line(screen, BLACK, (0, y * SIZE), (BLOCK_WIDTH * SIZE, y * SIZE), 1)
 
 
-    # 画已经落下的方块
-    def _draw_game_area(self,screen, game_area):
-      if game_area:
-         for i, row in enumerate(game_area):
-                for j, cell in enumerate(row):
-                   if cell != '.':
-                       pygame.draw.rect(screen, BLOCK_COLOR, (j * SIZE, i * SIZE, SIZE, SIZE), 0)
+    def _draw_gameon(self,screen):
+     _draw_background(screen)
+   #将原设计中的菜单选项转化为pygame里的UI交互
+    def _draw_UIInterface(self,screen):
+         # 填充背景色
+        start_ck = pygame.Surface(screen.get_size())    #   充当开始界面的画布
+
+        start_ck = start_ck.convert()
+
+        start_ck.fill(BG_COLOR)  # 蓝色画布1（开始界面用的）
+
+        # 加载各个素材图片 并且赋予变量名
+        i1 = pygame.image.load("./images/s1.png")
+        i1.convert()
+        i11 = pygame.image.load("./images/s2.png")
+        i11.convert()
+
+        i2 = pygame.image.load("./images/n2.png")
+        i2.convert()
+        i21 = pygame.image.load("./images/n1.png")
+        i21.convert()
+
+        i3 = pygame.image.load('./images/m2.png')
+        i3.convert()
+        i31 = pygame.image.load('./images/m1.png')
+        i31.convert()
+        #  以下为选择开始界面鼠标检测结构。
+        n1 = True
+        while n1:
+          #clock.tick(30)
+          buttons = pygame.mouse.get_pressed()
+          x1, y1 = pygame.mouse.get_pos()
+          if x1 >= 100 and x1 <= 500 and y1 >= 100 and y1 <=150:
+            start_ck.blit(i11, (100, 100))
+            if buttons[0]:
+               n1 = False
+
+          elif x1 >= 100 and x1 <= 500 and y1 >= 200 and y1 <=250:
+             start_ck.blit(i21, (100, 200))
+             if buttons[0]:
+               pygame.quit()
+               exit()
+
+          elif x1 >= 100 and x1 <= 500 and y1 >= 300 and y1 <=350:
+             start_ck.blit(i31, (100, 300))
+          else:
+             start_ck.blit(i1, (100, 100))
+             start_ck.blit(i2, (100, 200))
+             start_ck.blit(i3, (100, 300))
 
 
-    # 画单个方块
-    def _draw_block(self,screen, block, offset_x, offset_y, pos_x, pos_y):
-      if block:
-         for i in range(block.start_pos.Y, block.end_pos.Y + 1):
-                for j in range(block.start_pos.X, block.end_pos.X + 1):
-                   if block.template[i][j] != '.':
-                      pygame.draw.rect(screen, BLOCK_COLOR,
-                                      (offset_x + (pos_x + j) * SIZE, offset_y + (pos_y + i) * SIZE, SIZE, SIZE), 0)
+          screen.blit(start_ck,(0,0))
+          pygame.display.update()
+
+        # 下面是监听退出动作
+
+         # 监听事件
+          for event in pygame.event.get():
+
+            # 判断事件类型是否是退出事件
+            if event.type == pygame.QUIT:
+              print("游戏退出...")
+
+               # quit 卸载所有的模块
+              pygame.quit()
+
+               # exit() 直接终止当前正在执行的程序
+              exit()
+        screen.blit(screen,(0,0))
+        pygame.display.update()
+        #  以下可以写第一关的代码了
+        n2 = True
+        while n2:
+         #clock.tick(30)
+
+         _draw_background(self,screen)
+         _draw_gridlines(self,screen)
+        
 
 
-    # 画得分等信息
-    def _draw_info(self,screen, font, pos_x, font_height, score):
-     print_text(screen, font, pos_x, 10, f'得分: ')
-     print_text(screen, font, pos_x, 10 + font_height + 6, f'{score}')
-     print_text(screen, font, pos_x, 20 + (font_height + 6) * 2, f'速度: ')
-     print_text(screen, font, pos_x, 20 + (font_height + 6) * 3, f'{score // 10000}')
-     print_text(screen,font,pos_x,30+(font_height+6)*4,f'消除总行数：')
-     print_text(screen,font,pos_x,30+(font_height+6)*5,f'{score/100}')
-     print_text(screen, font, pos_x,50 + (font_height + 6) * 6, f'下一个：')
+         for event in pygame.event.get():
+
+        # 判断事件类型是否是退出事件
+           if event.type == pygame.QUIT:
+              print("游戏退出...")
+
+              # quit 卸载所有的模块
+              pygame.quit()
+
+            # exit() 直接终止当前正在执行的程序
+              exit()
+
